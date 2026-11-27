@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>gchat-markread fixture</title>
+<style>
+  body { font: 14px system-ui, sans-serif; margin: 24px; }
+  .panel { width: 460px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 16px; }
+  .header { display: flex; align-items: center; gap: 8px; padding: 8px; }
+  .header { gap: 12px; }
+  .cell { display: flex; align-items: center; }
+  .capsule { background: rgb(233, 238, 246); color: rgb(31, 31, 31); border-radius: 9999px; }
+  .chip { display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border-radius: 14px; background: #eee; }
+  [data-gchat-markread] { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 14px; }
+  [role="listitem"] { display: flex; align-items: center; gap: 8px; padding: 8px; cursor: pointer; min-height: 30px; }
+  [role="listitem"]:hover { background: #f5f5f5; }
+  .badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 9px; background: #1a73e8; color: #fff; font-size: 11px; }
+  #listB { height: 90px; overflow: auto; }
+  #results { margin-top: 24px; font-family: ui-monospace, monospace; white-space: pre-wrap; }
+  .pass { color: #1e8e3e; }
+  .fail { color: #d93025; }
+</style>
+</head>
+<body>
+<div class="panel" id="scopeA">
+  <div class="header" id="headerA">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listA">
+    <div role="listitem" id="rowAria" aria-label="Slive OWC Backend, 3 unread messages">
+      <span>Slive OWC Backend</span>
+    </div>
+    <div role="listitem" id="rowBadge">
+      <span>SotaTek Market</span>
+      <span class="badge">2</span>
+    </div>
+    <div role="listitem" id="rowRead">
+      <span>Random - SotaTek</span>
+      <span>9:15 AM</span>
+    </div>
+    <div role="listitem" id="rowMarkUnread">
+      <span>Ngoc Vu</span>
+      <button aria-label="Mark as unread">x</button>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="scopeB">
+  <div class="header" id="headerB">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listB">
+    <div role="listitem"><span>doc 1</span></div>
+    <div role="listitem"><span>doc 2</span></div>
+    <div role="listitem"><span>doc 3</span></div>
+    <div role="listitem"><span>doc 4</span></div>
+    <div role="listitem" aria-label="Space duoi day, unread"><span>unread duoi 1</span></div>
+    <div role="listitem" aria-label="Space duoi day 2, unread"><span>unread duoi 2</span></div>
+  </div>
+</div>
+
+<div class="panel" id="scopeC">
+  <div class="header" id="headerC">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listC">
+    <div role="listitem" aria-label="khong bao gio doc duoc, unread"><span>khong clear 1</span></div>
+    <div role="listitem" aria-label="khong bao gio doc duoc 2, unread"><span>khong clear 2</span></div>
+  </div>
+</div>
+
+<div class="panel" id="scopeE">
+  <div class="header" id="headerE">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listE">
+    <div role="listitem" id="stuckRow" aria-label="row ket, unread"><span>row ket</span></div>
+    <div role="listitem" aria-label="doc duoc 1, unread"><span>doc duoc 1</span></div>
+    <div role="listitem" aria-label="doc duoc 2, unread"><span>doc duoc 2</span></div>
+  </div>
+</div>
+
+<div class="panel" id="scopeF">
+  <div class="header" id="headerF">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listF">
+    <div role="listitem"><span>da doc 1</span><span>9:15 AM</span></div>
+    <div role="listitem"><span>da doc 2</span><span>9:20 AM</span></div>
+  </div>
+</div>
+
+<div class="panel" id="scopeG">
+  <div class="header" id="headerG">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listG">
+    <span role="listitem" data-topic-id="T1" data-group-id="space/SPACE1" data-display-timestamp="1794387519165" data-is-unread="true">api 1</span>
+    <span role="listitem" data-topic-id="T2" data-group-id="space/SPACE2" data-display-timestamp="1794387145457" data-is-unread="true">api 2</span>
+    <span role="listitem" data-topic-id="T3" data-group-id="space/SPACE3" data-display-timestamp="1794384492534" data-is-unread="false">da doc</span>
+  </div>
+</div>
+
+<div class="panel" id="scopeH">
+  <div class="header" id="headerH">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listH">
+    <span role="listitem" id="rowFail" data-topic-id="TFAIL" data-group-id="space/SPACEF" data-display-timestamp="1794381000000" data-is-unread="true">api loi</span>
+    <span role="listitem" data-topic-id="TOK" data-group-id="space/SPACEO" data-display-timestamp="1794381000001" data-is-unread="false">da doc</span>
+  </div>
+</div>
+
+<div class="panel" id="scopeI">
+  <div class="header" id="headerI">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listI" style="height: 90px; overflow: auto;">
+    <span role="listitem" data-topic-id="TI1" data-group-id="space/SI" data-display-timestamp="1794000000001" data-is-unread="true">trang 1 - a</span>
+    <span role="listitem" data-topic-id="TI2" data-group-id="space/SI" data-display-timestamp="1794000000002" data-is-unread="true">trang 1 - b</span>
+    <span role="listitem" data-topic-id="TI3" data-group-id="space/SI" data-display-timestamp="1794000000003" data-is-unread="true">trang 1 - c</span>
+    <span role="listitem" data-topic-id="TI4" data-group-id="space/SI" data-display-timestamp="1794000000004" data-is-unread="true">trang 1 - d</span>
+    <span role="listitem" data-topic-id="TI5" data-group-id="space/SI" data-display-timestamp="1794000000005" data-is-unread="true">trang 1 - e</span>
+  </div>
+</div>
+
+<div class="panel" id="scopeK">
+  <div class="header" id="headerK">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listK">
+    <div role="listitem" aria-label="ket 1, unread"><span>ket 1</span></div>
+    <div role="listitem" aria-label="ket 2, unread"><span>ket 2</span></div>
+  </div>
+</div>
+
+<div class="panel" id="scopeL">
+  <div class="header" id="headerL">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div id="clipL" style="height: 60px; overflow: clip;">
+    <div role="list" id="listL">
+      <div role="listitem" aria-label="list ngan, unread" style="min-height: 150px"><span>list ngan</span></div>
+      <div role="listitem" style="min-height: 40px"><span>da doc</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Cuoi backlog: list chi con 1 row, trong khi noi khac co nhieu row hon (nhu sidebar). -->
+<div class="panel" id="scopeM">
+  <div class="header" id="headerM">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listM">
+    <span role="listitem" data-topic-id="TM1" data-group-id="space/SM" data-display-timestamp="1794000000100" data-is-unread="true">1 row cuoi</span>
+  </div>
+</div>
+
+<!-- Row group-level: khong co data-topic-id, chi co space; phai doc qua mark_group_readstate, khong mo hoi thoai. -->
+<div class="panel" id="scopeP">
+  <div class="header" id="headerP">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listP">
+    <span role="listitem" id="rowGrp" data-group-id="space/SGRP" data-display-timestamp="1794000000200" data-is-unread="true">group moi</span>
+    <span role="listitem" data-group-id="space/SGRPOK" data-display-timestamp="1794000000201" data-is-unread="false">da doc</span>
+  </div>
+</div>
+
+<!-- DM xen giua row topic: doc qua set_mark_as_unread_timestamp; DM loi API khong duoc click, row topic van phai doc het. -->
+<div class="panel" id="scopeQ">
+  <div class="header" id="headerQ">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+  </div>
+  <div role="list" id="listQ">
+    <span role="listitem" id="rowDm" data-group-id="dm/DM1" data-display-timestamp="1794000000300" data-is-unread="true">Google Drive</span>
+    <span role="listitem" id="rowDmFail" data-group-id="dm/DMF" data-display-timestamp="1794000000299" data-is-unread="true">DM api loi</span>
+    <span role="listitem" data-topic-id="TQ1" data-group-id="space/SQ" data-display-timestamp="1794000000301" data-is-unread="true">topic 1</span>
+    <span role="listitem" data-topic-id="TQ2" data-group-id="space/SQ" data-display-timestamp="1794000000302" data-is-unread="true">topic 2</span>
+  </div>
+</div>
+
+<!-- Cuoi cung trong trang: view rong canh sidebar co row mang badge (nhu Drafts o Chat that). -->
+<div id="shellN" style="display: flex; gap: 16px;">
+  <div id="sidebarN" style="width: 140px;">
+    <div role="list" id="listSideN">
+      <div role="listitem" aria-label="Drafts shortcut, 1 unread"><span>Drafts</span><span class="badge">1</span></div>
+      <div role="listitem" aria-label="Mentions shortcut, 9 unread"><span>Mentions</span><span class="badge">9</span></div>
+    </div>
+  </div>
+  <div class="panel" id="scopeN" style="width: 300px;">
+    <div class="header" id="headerN">
+    <div class="cell"><span role="button" class="chip">Unread</span></div>
+    <div class="cell capsule"><span role="button" class="chip">Thread</span></div>
+    <div class="cell"><span role="button" class="chip">Menu</span></div>
+    </div>
+    <div role="list" id="listN"></div>
+  </div>
+</div>
+
+<div id="results"></div>
+<script src="../content.js"></script>
+<script>
+  const api = window.__chatMarkRead;
+  const apiCalls = [];
+  const groupCalls = [];
+  const dmCalls = [];
+  const listCalls = [];
+  const threadCalls = [];
+  let reloads = 0;
+  api.hooks.reload = () => { reloads++; };
+  const realFetch = window.fetch;
+  window.fetch = async (url, init) => {
+    if (/xsrf_token/.test(url)) return new Response('TOKEN123');
+    if (/mark_topic_readstate/.test(url)) {
+      const body = JSON.parse(init.body);
+      apiCalls.push({ url, headers: init.headers, body });
+      if (body[0][1] === 'TFAIL') return new Response('', { status: 500 });
+      return new Response(")]}'\n[[\"dfe.rs.mtrs\",[]]]");
+    }
+    if (/mark_group_readstate/.test(url)) {
+      const body = JSON.parse(init.body);
+      groupCalls.push({ url, headers: init.headers, body });
+      if (body[0][0][0] === 'SPACEF') return new Response('', { status: 500 });
+      return new Response(")]}'\n[]");
+    }
+    if (/set_mark_as_unread_timestamp/.test(url)) {
+      const body = JSON.parse(init.body);
+      dmCalls.push({ url, headers: init.headers, body });
+      if (/"(DMF|SPACEF)"/.test(JSON.stringify(body[0]))) return new Response('', { status: 500 });
+      return new Response(")]}'\n[]");
+    }
+    if (/list_topics/.test(url)) {
+      const body = JSON.parse(init.body);
+      listCalls.push({ url, body });
+      const space = body[7][0][0];
+      if (space === 'SPACEF') return new Response('', { status: 500 });
+      if (space !== 'SGRP') return new Response(")]}'\n[[\"dfe.t.lt\",[]]]");
+      const ref = (id) => `[null,"${id}",[["SGRP"]]]`;
+      return new Response(`)]}'\n[["dfe.t.lt",[[${ref('TOPICAAAAAA')},"1",null,[[[[null,null,null,${ref('TOPICAAAAAA')}],"MSG00000001"]]]],[${ref('TOPICBBBBBB')},"2"],[${ref('TOPICAAAAAA')}]]]]`);
+    }
+    if (/set_topic_unread_timestamp/.test(url)) {
+      const body = JSON.parse(init.body);
+      threadCalls.push({ url, headers: init.headers, body });
+      return new Response(")]}'\n[]");
+    }
+    return realFetch(url, init);
+  };
+  const out = [];
+  let failed = 0;
+
+  function check(name, actual, expected) {
+    const ok = JSON.stringify(actual) === JSON.stringify(expected);
+    if (!ok) failed++;
+    out.push(`${ok ? 'PASS' : 'FAIL'} ${name} (got ${JSON.stringify(actual)})`);
+  }
+
+  function waitFor(pred, ms) {
+    return new Promise((resolve) => {
+      const deadline = Date.now() + ms;
+      const timer = setInterval(() => {
+        if (pred()) {
+          clearInterval(timer);
+          resolve(true);
+        } else if (Date.now() > deadline) {
+          clearInterval(timer);
+          resolve(false);
+        }
+      }, 50);
+    });
+  }
+
+  const listA = document.getElementById('listA');
+  const listB = document.getElementById('listB');
+  const listE = document.getElementById('listE');
+  const labelOf = (header) => header.querySelector('[data-label]');
+
+  // Chat that: mo hoi thoai o mousedown, khong phai click. rowAria chi nghe mousedown
+  // de bat truong hop code quay lai dung element.click().
+  function clearOn(row, type) {
+    row.addEventListener(type, () => {
+      row.removeAttribute('aria-label');
+      const badge = row.querySelector('.badge');
+      if (badge) badge.remove();
+    });
+  }
+  const rowAria = document.getElementById('rowAria');
+  clearOn(rowAria, 'mousedown');
+  for (const row of [...listA.children, ...listB.children]) if (row !== rowAria) clearOn(row, 'click');
+  for (const row of [...listE.children]) if (row.id !== 'stuckRow') clearOn(row, 'click');
+  clearOn(document.querySelector('#listL > div'), 'click');
+
+  check('isUnreadLabel "Mark as unread"', api.isUnreadLabel('Mark as unread'), false);
+  check('isUnreadLabel "danh dau la chua doc"', api.isUnreadLabel('Đánh dấu là chưa đọc'), false);
+  check('isUnreadLabel "3 unread"', api.isUnreadLabel('Slive, 3 unread messages'), true);
+  check('isUnreadLabel "SotaTek Market, 3 unread"', api.isUnreadLabel('SotaTek Market, 3 unread messages'), true);
+  check('isUnreadLabel "Mark Nguyen, 2 unread"', api.isUnreadLabel('Mark Nguyen, 2 unread messages'), true);
+  check('isUnreadRow aria-label', api.isUnreadRow(document.getElementById('rowAria')), true);
+  check('isUnreadRow badge', api.isUnreadRow(document.getElementById('rowBadge')), true);
+  check('isUnreadRow da doc', api.isUnreadRow(document.getElementById('rowRead')), false);
+  check('isUnreadRow co nut Mark as unread', api.isUnreadRow(document.getElementById('rowMarkUnread')), false);
+  const flagRow = document.createElement('div');
+  flagRow.setAttribute('role', 'listitem');
+  flagRow.setAttribute('data-is-unread', 'true');
+  const flagOff = document.createElement('div');
+  flagOff.setAttribute('role', 'listitem');
+  flagOff.setAttribute('data-is-unread', 'false');
+  check('isUnreadRow theo data-is-unread true', api.isUnreadRow(flagRow), true);
+  check('isUnreadRow theo data-is-unread false', api.isUnreadRow(flagOff), false);
+  check('rowsIn panel A', api.rowsIn(listA).length, 4);
+  check('clickRow dispatch mousedown', typeof api.clickRow, 'function');
+  check('rolePanelIn scope A', api.rolePanelIn(document.getElementById('scopeA')).panel === listA, true);
+  check('chipRows: hang la header', api.chipRows()[0].row === document.getElementById('headerA'), true);
+  check('chipRows: neo la vien thuoc Thread', api.chipRows()[0].anchor.classList.contains('capsule'), true);
+
+  api.ensureButtons();
+  api.ensureButtons();
+  check('1 button moi header', document.querySelectorAll('[data-gchat-markread]').length, 14);
+  const pillA = document.querySelector('#headerA [data-gchat-markread]');
+  check('sidebar khong bao gio co nut', document.querySelector('#sidebarN [data-gchat-markread]'), null);
+  check('pill la anh em cua hang header', pillA.parentElement.id, 'headerA');
+  check('pill nam ngay sau vien thuoc Thread', pillA.previousElementSibling.classList.contains('capsule'), true);
+  check('pill khong nam trong vien thuoc Thread', document.querySelector('#headerA .capsule').contains(pillA), false);
+  check('pill lay nen cua chip lien ke', pillA.style.getPropertyValue('--mr-bg'), 'rgb(233, 238, 246)');
+  check('pill lay mau chu cua chip lien ke', pillA.style.getPropertyValue('--mr-fg'), 'rgb(31, 31, 31)');
+  check('idle: aria-busy false', pillA.getAttribute('aria-busy'), 'false');
+  document.documentElement.lang = 'en';
+  api.setState(pillA, 'idle');
+  check('nhan theo ngon ngu cua Chat (en)', labelOf(document.getElementById('headerA')).textContent, 'Mark all read');
+  document.documentElement.lang = 'vi';
+  api.setState(pillA, 'idle');
+  check('nhan mac dinh', labelOf(document.getElementById('headerA')).textContent, 'Đọc hết');
+
+  listB.scrollTop = listB.scrollHeight;
+  check('scrollStep o day list', api.scrollStep(listB), false);
+  check('scrollStep khi con duoi', api.scrollStep(listB), true);
+
+  const header = (id) => document.getElementById(id);
+  const btnA = document.querySelector('#headerA [data-gchat-markread]');
+  const btnB = document.querySelector('#headerB [data-gchat-markread]');
+  const btnC = document.querySelector('#headerC [data-gchat-markread]');
+  const btnE = document.querySelector('#headerE [data-gchat-markread]');
+  const btnF = document.querySelector('#headerF [data-gchat-markread]');
+  const btnG = document.querySelector('#headerG [data-gchat-markread]');
+  const btnH = document.querySelector('#headerH [data-gchat-markread]');
+  const btnK = document.querySelector('#headerK [data-gchat-markread]');
+  const btnL = document.querySelector('#headerL [data-gchat-markread]');
+  const btnM = document.querySelector('#headerM [data-gchat-markread]');
+  const btnP = document.querySelector('#headerP [data-gchat-markread]');
+  const btnQ = document.querySelector('#headerQ [data-gchat-markread]');
+  const btnN = document.querySelector('#headerN [data-gchat-markread]');
+  window.sideClicks = 0;
+  for (const row of document.querySelectorAll('#listSideN > div')) row.addEventListener('mousedown', () => window.sideClicks++);
+  const btnI = document.querySelector('#headerI [data-gchat-markread]');
+
+  // Gia lap Chat tai trang ke tiep 1.2s sau khi cuon toi day (danh sach that chi them row luc do).
+  const listI = document.getElementById('listI');
+  let lazyDone = false;
+  // Poll bang timer thay vi su kien scroll: --virtual-time-budget chay timer nhanh hon frame.
+  const lazyPoll = setInterval(() => {
+    if (lazyDone || listI.scrollTop + listI.clientHeight < listI.scrollHeight - 4) return;
+    lazyDone = true;
+    clearInterval(lazyPoll);
+    setTimeout(() => {
+      for (const id of ['TI6', 'TI7', 'TI8']) {
+        const row = document.createElement('span');
+        row.setAttribute('role', 'listitem');
+        row.setAttribute('data-topic-id', id);
+        row.setAttribute('data-group-id', 'space/SI');
+        row.setAttribute('data-display-timestamp', '1794000000009');
+        row.setAttribute('data-is-unread', 'true');
+        row.textContent = 'trang 2 ' + id;
+        listI.appendChild(row);
+      }
+    }, 1200);
+  }, 50);
+
+  (async () => {
+    check('scopePanel chon list A', api.scopePanel(btnA).panel === listA, true);
+
+    btnA.click();
+    check('E2E panel A', await waitFor(() => api.rowsIn(listA).filter(api.isUnreadRow).length === 0, 20000), true);
+    await waitFor(() => /^Đã đọc/.test(labelOf(header('headerA')).textContent), 5000);
+    check('nhan bao so da doc', labelOf(header('headerA')).textContent, 'Đã đọc 2');
+
+    btnB.click();
+    check('E2E panel B (list dai, co cuon)', await waitFor(() => api.rowsIn(listB).filter(api.isUnreadRow).length === 0, 20000), true);
+
+    btnE.click();
+    const conKet = await waitFor(() => api.rowsIn(listE).filter(api.isUnreadRow).length === 1, 30000);
+    check('row ket khong chan row khac', conKet && api.rowsIn(listE).filter(api.isUnreadRow)[0].id === 'stuckRow', true);
+
+    check('khong reload khi chua dung API', reloads, 0);
+    btnG.click();
+    await waitFor(() => /^Đã đọc/.test(labelOf(header('headerG')).textContent), 20000);
+    await waitFor(() => reloads > 0, 5000);
+    check('API: tai lai trang sau khi doc xong', reloads, 1);
+    check('API: nhan bao so da doc', labelOf(header('headerG')).textContent, 'Đã đọc 2');
+    check('API: moi topic goi dung 1 lan du DOM chua cap nhat', apiCalls.filter((c) => c.body[0][1] !== 'TFAIL').map((c) => c.body[0][1]), ['T1', 'T2']);
+    const first = apiCalls[0];
+    check('API: body[0] la [null, topic, [[space]]]', first.body[0], [null, 'T1', [['SPACE1']]]);
+    check('API: body[1] = ms*1000+999', first.body[1], 1794387519165999);
+    check('API: body dai 100 phan tu', first.body.length, 100);
+    check('API: header xsrf + space', [first.headers['x-framework-xsrf-token'], first.headers['x-goog-chat-space-id']], ['TOKEN123', 'SPACE1']);
+    check('API: url dung endpoint', /^\/u\/0\/api\/mark_topic_readstate\?c=\d+$/.test(first.url), true);
+    check('API topic: xoa them co chua doc cua thread', threadCalls.filter((c) => c.body[0][1] === 'T1' || c.body[0][1] === 'T2').map((c) => [c.body[0], c.body[1]]), [[[null, 'T1', [['SPACE1']]], 0], [[null, 'T2', [['SPACE2']]], 0]]);
+
+    document.getElementById('rowFail').addEventListener('mousedown', () => document.getElementById('rowFail').setAttribute('data-is-unread', 'false'));
+    btnH.click();
+    await waitFor(() => /^Đã đọc/.test(labelOf(header('headerH')).textContent), 20000);
+    check('API loi: du phong click DOM van doc duoc', labelOf(header('headerH')).textContent, 'Đã đọc 1');
+    check('API loi: row da duoc doc bang DOM', document.getElementById('rowFail').getAttribute('data-is-unread'), 'false');
+
+    btnI.click();
+    await waitFor(() => /^Đã đọc/.test(labelOf(header('headerI')).textContent), 30000);
+    check('trang ke tiep tai cham: doc du ca 2 trang', labelOf(header('headerI')).textContent, 'Đã đọc 8');
+    check('trang ke tiep tai cham: topic cua trang 2 da duoc gui', ['TI6', 'TI7', 'TI8'].every((id) => apiCalls.some((c) => c.body[0][1] === id)), true);
+
+    btnL.click();
+    await waitFor(() => /^Đã đọc/.test(labelOf(header('headerL')).textContent), 15000);
+    check('list ngan khong cuon duoc: ket thuc nhanh, khong quay den MAX_ITER', labelOf(header('headerL')).textContent, 'Đã đọc 1');
+
+    const callsBeforeM = apiCalls.length;
+    btnM.click();
+    await waitFor(() => /^Đã đọc/.test(labelOf(header('headerM')).textContent), 20000);
+    check('list chi 1 row: doc dung row cua view minh', labelOf(header('headerM')).textContent, 'Đã đọc 1');
+    check('list chi 1 row: khong cham vao list khac', apiCalls.slice(callsBeforeM).map((c) => c.body[0][1]), ['TM1']);
+
+    let grpClicks = 0;
+    document.getElementById('rowGrp').addEventListener('mousedown', () => grpClicks++);
+    btnP.click();
+    await waitFor(() => /^Đã đọc/.test(labelOf(header('headerP')).textContent), 20000);
+    check('group-level: doc bang API', labelOf(header('headerP')).textContent, 'Đã đọc 1');
+    check('group-level: khong mo hoi thoai (khong redirect)', grpClicks, 0);
+    const g = groupCalls.find((c) => c.body[0][0][0] === 'SGRP');
+    check('group-level: body[0] la [[space]]', g.body[0], [['SGRP']]);
+    check('group-level: body[1] = ms*1000+999 cua row', g.body[1], 1794000000200999);
+    check('group-level: body dai 100 phan tu', g.body.length, 100);
+    check('group-level: header xsrf + space', [g.headers['x-framework-xsrf-token'], g.headers['x-goog-chat-space-id']], ['TOKEN123', 'SGRP']);
+    check('group-level: url dung endpoint', /^\/u\/0\/api\/mark_group_readstate\?c=\d+$/.test(g.url), true);
+    const u = dmCalls.find((c) => JSON.stringify(c.body[0]) === '[["SGRP"]]');
+    check('group-level: xoa co chua doc [[space]], 0', [u.body[0], u.body[1], u.body.length], [[['SGRP']], 0, 100]);
+    check('group-level: header space cua xoa co chua doc', u.headers['x-goog-chat-space-id'], 'SGRP');
+    const l = listCalls.find((c) => c.body[7][0][0] === 'SGRP');
+    check('thread: list_topics body [7] = [[space]], dai 100', [l.body[7], l.body.length], [[['SGRP']], 100]);
+    check('thread: list_topics url', /^\/u\/0\/api\/list_topics\?c=\d+$/.test(l.url), true);
+    const ids = threadCalls.filter((c) => c.body[0][2][0][0] === 'SGRP').map((c) => c.body[0][1]).sort();
+    check('thread: xoa co moi thread 1 lan, khong trung', ids, ['TOPICAAAAAA', 'TOPICBBBBBB']);
+    const t = threadCalls.find((c) => c.body[0][1] === 'TOPICAAAAAA');
+    check('thread: body = [[null, id, [[space]]], 0] dai 100', [t.body[0][0], t.body[0][2], t.body[1], t.body.length], [null, [['SGRP']], 0, 100]);
+    check('thread: url set_topic_unread_timestamp', /^\/u\/0\/api\/set_topic_unread_timestamp\?c=\d+$/.test(t.url), true);
+    check('group-level: khong goi topic API', apiCalls.some((c) => c.body[0][2] && c.body[0][2][0][0] === 'SGRP'), false);
+
+    let dmClicks = 0;
+    for (const id of ['rowDm', 'rowDmFail']) document.getElementById(id).addEventListener('mousedown', () => dmClicks++);
+    btnQ.click();
+    await waitFor(() => /^Đã đọc|^Không đọc/.test(labelOf(header('headerQ')).textContent), 20000);
+    check('DM xen giua topic: khong click DM (khong redirect)', dmClicks, 0);
+    const d = dmCalls.find((c) => JSON.stringify(c.body[0]) === '[null,null,["DM1"]]');
+    check('DM: body[0] la [null,null,[dm]]', d.body[0], [null, null, ['DM1']]);
+    check('DM: body[1] la 0, dai 100 phan tu', [d.body[1], d.body.length], [0, 100]);
+    check('DM: url dung endpoint', /^\/u\/0\/api\/set_mark_as_unread_timestamp\?c=\d+$/.test(d.url), true);
+    check('DM: header xsrf', d.headers['x-framework-xsrf-token'], 'TOKEN123');
+    check('DM loi API: row van chua doc, khong bi click', document.getElementById('rowDmFail').getAttribute('data-is-unread'), 'true');
+    check('DM xen giua topic: row topic van doc het', ['TQ1', 'TQ2'].every((id) => apiCalls.some((c) => c.body[0][1] === id)), true);
+    check('DM xen giua topic: nhan bao so da doc', labelOf(header('headerQ')).textContent, 'Đã đọc 3');
+
+    btnN.click();
+    await waitFor(() => labelOf(header('headerN')).textContent === 'Không còn gì', 20000);
+    check('view rong canh sidebar: bao khong con gi', labelOf(header('headerN')).textContent, 'Không còn gì');
+    check('view rong canh sidebar: khong bam nham vao sidebar', window.sideClicks, 0);
+
+    // Pill bi go khoi trang giua luc dang chay (chuyen view): phai dung, khong bam vao noi khac.
+    const shellO = document.createElement('div');
+    shellO.innerHTML = '<div class="panel" id="scopeO" style="width: 300px;"><div class="header" id="headerO">' +
+      '<div class="cell"><span role="button" class="chip">Unread</span></div>' +
+      '<div class="cell capsule"><span role="button" class="chip">Thread</span></div>' +
+      '<div class="cell"><span role="button" class="chip">Menu</span></div></div>' +
+      '<div role="list" id="listO">' + Array.from({ length: 8 }, (_, i) => `<div role="listitem" aria-label="O ${i}, unread"><span>O ${i}</span></div>`).join('') + '</div></div>';
+    document.body.insertBefore(shellO, document.getElementById('results'));
+    api.ensureButtons();
+    window.oClicks = 0;
+    for (const row of document.querySelectorAll('#listO > div')) row.addEventListener('mousedown', () => { window.oClicks++; row.removeAttribute('aria-label'); });
+    document.querySelector('#headerO [data-gchat-markread]').click();
+    await new Promise((resolve) => setTimeout(resolve, 1800));
+    shellO.remove();
+    await new Promise((resolve) => setTimeout(resolve, 6000));
+    check('pill bi go giua chung: dung lai, khong doc het list cu', window.oClicks < 8, true);
+    check('pill bi go giua chung: khong bam vao sidebar', window.sideClicks, 0);
+
+    const logs = [];
+    const origLog = console.log;
+    console.log = (...args) => {
+      logs.push(args.join(' '));
+      origLog(...args);
+    };
+
+    btnF.click();
+    await waitFor(() => labelOf(header('headerF')).textContent === 'Không còn gì', 20000);
+    check('empty: nhan khi khong con gi de doc', labelOf(header('headerF')).textContent, 'Không còn gì');
+    check('empty: state empty (khong phai loi)', btnF.dataset.state, 'empty');
+    check('empty: khong in dump DOM', logs.some((line) => line.includes('debug panel:')), false);
+
+    btnK.click();
+    await waitFor(() => labelOf(header('headerK')).textContent === 'Không đọc được', 30000);
+    check('fail: nhan khi row khong doc duoc', labelOf(header('headerK')).textContent, 'Không đọc được');
+    check('fail: state fail', btnK.dataset.state, 'fail');
+    check('fail: log co panel va rows', logs.some((line) => /panel=\S+ rows=\d+ unread=\d+/.test(line)), true);
+    check('fail: dump DOM de chan doan', logs.some((line) => line.includes('debug panel:')), true);
+
+    btnC.click();
+    setTimeout(() => btnC.click(), 30);
+    const aborted = await waitFor(() => logs.some((line) => line.includes('dừng bởi người dùng')), 20000);
+    console.log = origLog;
+    check('bam lan hai de dung', aborted, true);
+
+    out.push(failed ? `${failed} FAILED` : 'ALL PASS');
+    document.getElementById('results').innerHTML = out
+      .map((line) => `<div class="${line.startsWith('FAIL') ? 'fail' : 'pass'}">${line}</div>`)
+      .join('');
+    document.title = failed ? 'FAIL' : 'ALL PASS';
+  })();
+</script>
+</body>
+</html>

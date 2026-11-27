@@ -1,0 +1,81 @@
+/* Khop chip goc cua Chat (do tren app that): cao 28px, bo tron, nen tonal, Google Sans 12px/500,
+   icon 18px, dem trai 8px, phai 12px. --mr-bg / --mr-fg duoc content.js lay tu chip lien ke. */
+[data-gchat-markread] {
+  --mr-bg: #e9eef6;
+  --mr-fg: #1f1f1f;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  margin: 0;
+  padding: 0 12px 0 8px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--mr-bg);
+  color: var(--mr-fg);
+  font: 500 12px/16px "Google Sans", Roboto, Arial, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-gchat-markread]:hover {
+  background: color-mix(in srgb, var(--mr-fg) 8%, var(--mr-bg));
+}
+
+[data-gchat-markread]:active {
+  background: color-mix(in srgb, var(--mr-fg) 14%, var(--mr-bg));
+}
+
+[data-gchat-markread]:focus-visible {
+  outline: 2px solid -webkit-focus-ring-color;
+  outline-offset: 2px;
+}
+
+[data-gchat-markread] svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+[data-gchat-markread] path {
+  fill: currentColor;
+}
+
+[data-gchat-markread][data-state="running"] path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+[data-gchat-markread][data-state="running"] svg {
+  animation: gchat-mr-spin 900ms linear infinite;
+}
+
+[data-gchat-markread][data-state="empty"] {
+  color: color-mix(in srgb, var(--mr-fg) 70%, var(--mr-bg));
+}
+
+[data-gchat-markread][data-state="fail"] {
+  color: color-mix(in srgb, #b3261e 80%, var(--mr-fg));
+}
+
+@keyframes gchat-mr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-gchat-markread] {
+    transition: none;
+  }
+
+  [data-gchat-markread][data-state="running"] svg {
+    animation: none;
+  }
+}

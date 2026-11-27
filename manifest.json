@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Mark read all - Google Chat",
+  "version": "1.2.2",
+  "description": "Them nut danh dau tat ca la da doc vao header cua tung list trong Google Chat.",
+  "content_scripts": [
+    {
+      "matches": ["https://chat.google.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

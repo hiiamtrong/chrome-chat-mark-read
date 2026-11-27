@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>gchat-markread structural fixture</title>
+<style>
+  body { font: 14px system-ui, sans-serif; margin: 24px; }
+  .panel { width: 460px; border: 1px solid #ccc; border-radius: 8px; }
+  /* Khong co role nao: row chi con la con cua list voi avatar + jsaction. */
+  .list { height: 90px; overflow: auto; }
+  .row { display: flex; align-items: center; gap: 8px; padding: 8px; min-height: 30px; cursor: pointer; }
+  .row img { width: 24px; height: 24px; border-radius: 50%; }
+  .badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 9px; background: #1a73e8; color: #fff; font-size: 11px; }
+  [data-gchat-markread] { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 14px; }
+  #results { margin-top: 24px; font-family: ui-monospace, monospace; white-space: pre-wrap; }
+  .pass { color: #1e8e3e; }
+  .fail { color: #d93025; }
+</style>
+</head>
+<body>
+<div class="panel" id="scope">
+  <div class="header" id="header" style="display: flex; gap: 12px;">
+    <div><span role="button">Unread</span></div>
+    <div><span role="button">Thread</span></div>
+    <div><span role="button">Menu</span></div>
+  </div>
+  <div class="list" id="list" jsaction="click:list">
+    <div class="row" jsaction="click:row"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt=""><span>Gone</span></div>
+    <div class="row" jsaction="click:row"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt=""><span>Gone 2</span></div>
+    <div class="row" jsaction="click:row"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt=""><span>chua doc 1</span><span class="badge">3</span></div>
+    <div class="row" jsaction="click:row"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt=""><span>chua doc 2</span><span class="badge">1</span></div>
+  </div>
+</div>
+<div id="results"></div>
+<script src="../content.js"></script>
+<script>
+  const api = window.__chatMarkRead;
+  const out = [];
+  let failed = 0;
+
+  function check(name, actual, expected) {
+    const ok = JSON.stringify(actual) === JSON.stringify(expected);
+    if (!ok) failed++;
+    out.push(`${ok ? 'PASS' : 'FAIL'} ${name} (got ${JSON.stringify(actual)})`);
+  }
+
+  function waitFor(pred, ms) {
+    return new Promise((resolve) => {
+      const deadline = Date.now() + ms;
+      const timer = setInterval(() => {
+        if (pred()) {
+          clearInterval(timer);
+          resolve(true);
+        } else if (Date.now() > deadline) {
+          clearInterval(timer);
+          resolve(false);
+        }
+      }, 50);
+    });
+  }
+
+  const list = document.getElementById('list');
+  for (const row of [...list.children]) {
+    row.addEventListener('click', () => {
+      const badge = row.querySelector('.badge');
+      if (badge) badge.remove();
+    });
+  }
+
+  check('khong co role row', api.rolePanelIn(document.body).panel, null);
+  check('structuralPanelIn chon list', api.structuralPanelIn(document.body).panel === list, true);
+  check('rowsIn nhan 4 row', api.rowsIn(list).length, 4);
+  check('isRowLike row that', api.isRowLike(list.children[0]), true);
+  check('2 row chua doc', api.rowsIn(list).filter(api.isUnreadRow).length, 2);
+
+  api.ensureButtons();
+  api.ensureButtons();
+  const buttons = document.querySelectorAll('[data-gchat-markread]');
+  check('chi 1 button', buttons.length, 1);
+  check('button nam trong header co chip', buttons[0].parentElement === document.getElementById('header'), true);
+
+  (async () => {
+    buttons[0].click();
+    const done = await waitFor(() => api.rowsIn(list).filter(api.isUnreadRow).length === 0, 30000);
+    check('E2E khong role', done, true);
+    const label = buttons[0].querySelector('[data-label]');
+    await waitFor(() => /^Đã đọc/.test(label.textContent), 5000);
+    check('nhan bao so da doc', label.textContent, 'Đã đọc 2');
+
+    out.push(failed ? `${failed} FAILED` : 'ALL PASS');
+    document.getElementById('results').innerHTML = out
+      .map((line) => `<div class="${line.startsWith('FAIL') ? 'fail' : 'pass'}">${line}</div>`)
+      .join('');
+    document.title = failed ? 'FAIL' : 'ALL PASS';
+  })();
+</script>
+</body>
+</html>
