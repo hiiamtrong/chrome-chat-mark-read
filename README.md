@@ -1,138 +1,138 @@
-[English](README.en.md) | Tiếng Việt
+English | [Tiếng Việt](README.vi.md)
 
 # Mark read all - Google Chat
 
-Extension Chrome (Manifest V3) thêm nút **Mark all read** (tiếng Việt: **Đọc hết**) vào thanh tiêu đề của view Home trong Google Chat. Một lần bấm đánh dấu đã đọc mọi hội thoại chưa đọc trong danh sách, không cần mở từng hội thoại.
+A Chrome extension (Manifest V3) that adds a **Mark all read** button (Vietnamese UI: **Đọc hết**) to the header of the Home view in Google Chat. One click marks every unread conversation in the list as read, without opening each conversation.
 
-## Tính năng
+## Features
 
-- Đánh dấu đã đọc bằng các endpoint nội bộ mà chính Chat dùng, nên không mở hội thoại, không đổi view và không chuyển trang.
-- Xoá cả mốc đọc lẫn cờ chưa đọc (chấm xanh) cho topic, space và DM.
-- Hiển thị tiến độ trên nút. Bấm lần nữa khi đang chạy để dừng.
-- Giao diện khớp với chip gốc của Chat, lấy màu từ chip liền kề. Nhãn theo ngôn ngữ của Chat (`<html lang>`).
+- Marks conversations as read through the same internal endpoints Chat uses itself, so it does not open conversations, change views, or navigate.
+- Clears both the read marker and the unread flag (green dot) for topics, spaces, and DMs.
+- Shows progress on the button. Click it again while it runs to stop.
+- Matches Chat's own chips, taking colors from the adjacent chip. Labels follow Chat's language (`<html lang>`).
 
-## Yêu cầu
+## Requirements
 
-- Google Chrome hỗ trợ Manifest V3.
-- Tài khoản có quyền dùng Google Chat tại `https://chat.google.com`.
-- Chạy bộ test cần macOS và Google Chrome đặt ở `/Applications` (xem [Kiểm thử](#kiểm-thử)).
+- Google Chrome with Manifest V3 support.
+- A Google account that can use Google Chat at `https://chat.google.com`.
+- Running the test suite needs macOS with Google Chrome installed in `/Applications` (see [Testing](#testing)).
 
-## Cài đặt
+## Installation
 
-1. Mở `chrome://extensions` và bật **Developer mode**.
-2. Chọn **Load unpacked**, rồi trỏ đến thư mục repo này.
-3. Mở `https://chat.google.com`. Nút nằm trong hàng header của Home, ngay sau chip **Thread** và trước menu mật độ.
+1. Open `chrome://extensions` and enable **Developer mode**.
+2. Click **Load unpacked** and select this repository's folder.
+3. Open `https://chat.google.com`. The button sits in the Home header, right after the **Thread** chip and before the density menu.
 
-Chỉ view có chip **Unread** và **Thread** mới có nút (xem [Giới hạn](#giới-hạn)). Sau khi sửa code, reload extension ở `chrome://extensions` rồi tải lại tab Chat.
+Only views with the **Unread** and **Thread** chips get the button (see [Limitations](#limitations)). After changing the code, reload the extension at `chrome://extensions` and then reload the Chat tab.
 
-## Cách dùng
+## Usage
 
-Bấm **Mark all read**. Nút đổi trạng thái theo tiến độ:
+Click **Mark all read**. The button changes state as it progresses:
 
-| Trạng thái | Icon | Nhãn (en / vi) | Ý nghĩa |
+| State | Icon | Label (en / vi) | Meaning |
 |---|---|---|---|
-| idle | ✓✓ | Mark all read / Đọc hết | Sẵn sàng |
-| running | vòng xoay | Reading… N / Đang đọc… N | Đang chạy, N là số hội thoại đã đọc. Bấm lần nữa để dừng |
-| done | ✓ | Read N / Đã đọc N | Xong. Nếu đã đọc bằng API, trang tự tải lại sau 1,5 giây |
-| empty | ✓✓ nhạt | Nothing to read / Không còn gì | View không còn hội thoại chưa đọc. Đây không phải lỗi |
-| fail | ⓘ đỏ | Couldn't read / Không đọc được | Có row không đọc được. Tooltip gợi ý tải lại trang rồi thử lại |
+| idle | ✓✓ | Mark all read / Đọc hết | Ready |
+| running | spinner | Reading… N / Đang đọc… N | Running. N is the number of conversations read so far. Click again to stop |
+| done | ✓ | Read N / Đã đọc N | Finished. If anything was read through the API, the page reloads after 1.5 seconds |
+| empty | ✓✓ (muted) | Nothing to read / Không còn gì | The view has no unread conversations. This is not an error |
+| fail | ⓘ red | Couldn't read / Không đọc được | Some row could not be read. The tooltip suggests reloading the page and trying again |
 
-Màu không phải tín hiệu duy nhất: mỗi trạng thái đổi cả icon lẫn chữ. Sau 3 giây, nút trở về idle.
+Color is not the only signal: each state changes both the icon and the text. After 3 seconds the button returns to idle.
 
-Số N ở trạng thái `done` đếm request thành công, không phải số chấm xanh thật sự đã hết. Xem [Giới hạn](#giới-hạn).
+The N in the `done` state counts successful requests, not the number of green dots actually cleared. See [Limitations](#limitations).
 
-### Log chẩn đoán
+### Diagnostic log
 
-Mỗi lần chạy in một dòng vào Console (DevTools):
+Each run prints one line to the DevTools Console:
 
 ```text
 [gchat-markread] panel=... rows=... unread=... đã đọc=N (api=M) bỏ qua=... dừng vì <lý do>
 ```
 
-Khi kết thúc ở trạng thái `fail`, Console in thêm `debug panel:` và `debug row:` (HTML rút gọn). Nếu dừng vì `chạm MAX_ITER` (500 vòng), bấm lại để đọc tiếp. Backlog lớn cần nhiều lượt.
+If a run ends in the `fail` state, the Console also prints `debug panel:` and `debug row:` (trimmed HTML). If a run stops because it hit `MAX_ITER` (500 iterations), click again to continue. A large backlog takes several runs.
 
-## Cách hoạt động
+## How it works
 
-Extension chạy trong tab `chat.google.com` và gọi trực tiếp các endpoint mà nút "Mark as read" của chính Chat gọi. Các endpoint này không có tài liệu công khai.
+The extension runs in the `chat.google.com` tab and calls the same endpoints that Chat's own "Mark as read" button calls. These endpoints are not publicly documented.
 
-### 1. Chọn đúng list
+### 1. Picking the right list
 
-Extension chỉ nhận row nằm dưới nút và cùng cột với nó. Nhờ vậy sidebar (có mục mang badge số, như Drafts) và panel Calendar không bao giờ bị nhầm là list của view. View trống thì báo `empty`, không leo lên bấm vào sidebar. Nếu nút bị gỡ khỏi trang giữa chừng (đổi view), run dừng ngay.
+The extension only accepts rows that sit below the button and in the same column. This keeps the sidebar (which has count badges, such as Drafts) and the Calendar panel from being mistaken for the view's list. An empty view reports `empty` and never climbs up to click the sidebar. If the button is removed from the page mid-run (for example, after a view change), the run stops immediately.
 
-Row được nhận diện qua `span[role="listitem"]` trong `div[role="list"]`, có các thuộc tính `data-topic-id`, `data-group-id`, `data-display-timestamp` và `data-is-unread="true"`. Khi thiếu thuộc tính, extension đoán theo `aria-label`, badge số, và cuối cùng theo cấu trúc DOM.
+Rows are recognized through `span[role="listitem"]` inside `div[role="list"]`, with the attributes `data-topic-id`, `data-group-id`, `data-display-timestamp`, and `data-is-unread="true"`. When an attribute is missing, the extension falls back to `aria-label`, then to count badges, and finally to the DOM structure.
 
-### 2. Đánh dấu qua API
+### 2. Marking through the API
 
-Extension lấy XSRF token bằng `POST /u/N/api/xsrf_token` với body `[]`. Mỗi request gửi kèm header `x-framework-xsrf-token` và `x-goog-chat-space-id`. Body là mảng 100 phần tử, phần tử `[99]` là header client và có thể để trống.
+The extension gets an XSRF token with `POST /u/N/api/xsrf_token` and body `[]`. Each request sends the headers `x-framework-xsrf-token` and `x-goog-chat-space-id`. The body is a 100-element array. Element `[99]` is the client header and can be left empty.
 
-`timestamp` trong bảng dưới là `data-display-timestamp` (mili giây), nhân 1000 rồi cộng 999 để ra micro giây.
+In the table below, `timestamp` is `data-display-timestamp` (milliseconds), multiplied by 1000 and added to 999 to get microseconds.
 
-| Loại row | Request | Body chính |
+| Row type | Request | Main body |
 |---|---|---|
-| Topic (`space/...` có `data-topic-id`) | `mark_topic_readstate` | `[0] = [null, topicId, [[spaceId]]]`, `[1] = timestamp` |
-| Topic, sau khi đọc | `set_topic_unread_timestamp` | `[0] = [null, topicId, [[spaceId]]]`, `[1] = 0` |
-| Space (không có topic) | `mark_group_readstate` | `[0] = [[spaceId]]`, `[1] = timestamp` |
-| Space, xoá cờ | `set_mark_as_unread_timestamp` | `[0] = [[spaceId]]`, `[1] = 0` |
-| Space, xoá cờ từng thread | `list_topics`, rồi `set_topic_unread_timestamp` cho từng thread | Xem bên dưới |
+| Topic (`space/...` with `data-topic-id`) | `mark_topic_readstate` | `[0] = [null, topicId, [[spaceId]]]`, `[1] = timestamp` |
+| Topic, after reading | `set_topic_unread_timestamp` | `[0] = [null, topicId, [[spaceId]]]`, `[1] = 0` |
+| Space (no topic) | `mark_group_readstate` | `[0] = [[spaceId]]`, `[1] = timestamp` |
+| Space, clear unread flag | `set_mark_as_unread_timestamp` | `[0] = [[spaceId]]`, `[1] = 0` |
+| Space, clear unread flag of each thread | `list_topics`, then `set_topic_unread_timestamp` for each thread | See below |
 | DM (`dm/...`) | `set_mark_as_unread_timestamp` | `[0] = [null, null, [id]]`, `[1] = 0` |
 
-Mốc đọc và chấm xanh là hai cờ độc lập. `mark_topic_readstate` và `mark_group_readstate` chỉ ghi mốc đọc. Chấm xanh cần một request xoá cờ riêng, nên mỗi row gọi cả hai.
+The read marker and the green dot are two independent flags. `mark_topic_readstate` and `mark_group_readstate` only write the read marker. The green dot needs a separate request that clears the unread flag, so each row sends both.
 
-Với space có thread chưa đọc, id thread không nằm trong DOM của row. Extension gọi `list_topics` cho space đó (`[7] = [[spaceId]]`, `[8]` và `[9]` là giờ máy) rồi lấy id thread từ response bằng regex. Response không có cờ chưa đọc để lọc, nên extension xoá cờ của mọi thread trả về, khoảng 30 request cho mỗi space. Xoá cờ của thread đã đọc không gây hại.
+For a space with unread threads, the thread IDs are not in the row's DOM. The extension calls `list_topics` for that space (`[7] = [[spaceId]]`, `[8]` and `[9]` are the local clock) and extracts the thread IDs from the response with a regex. The response has no unread flag to filter on, so the extension clears the flag of every thread it returns, about 30 requests per space. Clearing the flag of an already-read thread does no harm.
 
-Các request chạy song song theo lượt 4 row. Sau mỗi lượt, extension cuộn list để Chat tải trang kế tiếp, và chờ tối đa 3 giây ở đáy trước khi kết luận đã hết.
+Requests run in parallel batches of 4 rows. After each batch the extension scrolls the list so Chat loads the next page, and waits up to 3 seconds at the bottom before concluding that the list is finished.
 
-### 3. Dự phòng
+### 3. Fallbacks
 
-- **DM** mà API lỗi thì bị bỏ qua, không click. Click mở hội thoại, Chat đổi view và run dừng giữa chừng.
-- **Row khác** (không nhận diện được, API lỗi, hoặc không lấy được token) thì mở hội thoại như người dùng. Extension gửi chuỗi `pointerdown`, `mousedown`, `pointerup`, `mouseup`, `click`, vì Chat mở hội thoại ở `mousedown` và bỏ qua `element.click()`.
+- **DMs** whose API call fails are skipped, not clicked. A click opens the conversation, Chat changes views, and the run stops partway.
+- **Other rows** (not recognized, API failure, or no token) are opened like a user would open them. The extension sends `pointerdown`, `mousedown`, `pointerup`, `mouseup`, `click`, because Chat opens conversations on `mousedown` and ignores `element.click()`.
 
-## Giới hạn
+## Limitations
 
-- **Endpoint nội bộ không có tài liệu.** Nếu Google đổi endpoint, extension rơi về click DOM. Lúc đó chậm hơn nhiều và cần tab đang focus.
-- **Chỉ view Home có nút.** Mentions và Starred dùng row `div[role="link"]` không có `data-topic-id` lẫn cờ chưa đọc, nên chưa có đường xử lý cho hai view này.
-- **Số trên nút đếm request thành công.** Server đôi khi giữ nguyên trạng thái chưa đọc của một số topic dù trả 200 (đã gặp khi thử), nên N có thể đếm dư.
-- **`mark_group_readstate` chỉ kiểm `res.ok`.** Chuỗi xác nhận của response chưa được xác định. Status và response được log ra Console.
-- **Header của `list_topics` có hằng số** (`1795596034859439` và ngôn ngữ `en`) được sao chép từ request thật, chưa rõ vai trò. Nếu `list_topics` bắt đầu lỗi, hãy kiểm tra chỗ này trước.
-- **Giao diện không tự cập nhật** sau khi đọc bằng API (đã đo trong 60 giây), nên extension tải lại trang. Nháp đang soạn được Chat lưu trong mục Drafts.
-- **Dự phòng click DOM có thể lộ trạng thái đã xem**, vì nó mở hội thoại. Đường API không mở hội thoại.
-- **Chưa kiểm chứng:** tài khoản thứ hai (`/u/1`, code lấy chỉ số từ URL), theme tối, và Chat chạy trong iframe hoặc Gmail. Extension không hỗ trợ Chat trong Gmail.
+- **The internal endpoints are undocumented.** If Google changes an endpoint, the extension falls back to DOM clicks. That is much slower and needs the tab to stay focused.
+- **Only the Home view has the button.** Mentions and Starred use `div[role="link"]` rows with no `data-topic-id` and no unread flag, so there is no handling for those views yet.
+- **The number on the button counts successful requests.** The server sometimes keeps some topics unread even when it returns 200 (seen during testing), so N can overcount.
+- **`mark_group_readstate` only checks `res.ok`.** The confirmation string in its response is not known. Status and response are logged to the Console.
+- **The `list_topics` header has constants** (`1795596034859439` and language `en`) copied from a real request. Their role is not known. If `list_topics` starts failing, check this first.
+- **The UI does not update on its own** after reading through the API (measured over 60 seconds), so the extension reloads the page. Drafts being composed are kept in the Drafts section.
+- **The DOM-click fallback can reveal that you have seen a conversation,** because it opens it. The API path does not open conversations.
+- **Not verified:** a second account (`/u/1`; the code reads the index from the URL), the dark theme, and Chat inside an iframe or Gmail. Chat inside Gmail is not supported.
 
-## Kiểm thử
+## Testing
 
 ```sh
 sh test/run.sh
 ```
 
-Script mở Chrome headless, mỗi trang dùng một profile tạm. Kết quả đúng là `<title>ALL PASS</title>` cho cả `fixture` và `structural`. Có thể mở từng file trong `test/` bằng Chrome để xem trực tiếp.
+The script opens Chrome headless, one temporary profile per page. The expected output is `<title>ALL PASS</title>` for both `fixture` and `structural`. You can also open each file in `test/` in Chrome to inspect it directly.
 
-- `test/fixture.html` dựng header giống Chat thật (ba phần tử anh em: Unread, chip Thread, menu) và kiểm tra:
-  - **Vị trí và kiểu:** nút nằm sau chip Thread, lấy nền và chữ từ chip liền kề, nhãn theo `lang`.
-  - **Nhận diện row:** `data-is-unread`, `aria-label`, badge, nhãn phủ định "Mark as unread".
-  - **Luồng chạy:** list thường, list dài có cuộn, row kẹt không chặn row khác, bấm lần hai để dừng, list ngắn không cuộn vẫn kết thúc nhanh.
-  - **API:** body đúng cấu trúc, header xsrf và space id, mỗi topic được xử lý đúng một lần, tải lại trang, dự phòng khi API lỗi, trang kế tiếp tải chậm.
-  - **Kết quả và an toàn:** trạng thái `empty` và `fail`, sidebar không bao giờ có nút, nút bị gỡ giữa chừng thì run dừng.
-- `test/structural.html` dò row theo cấu trúc, dùng khi Chat không đặt role.
+- `test/fixture.html` builds a header like the real Chat one (three sibling elements: Unread, the Thread chip, the menu) and checks:
+  - **Position and style:** the button sits after the Thread chip, takes its background and text from the adjacent chip, and its label follows `lang`.
+  - **Row recognition:** `data-is-unread`, `aria-label`, badges, and the negative label "Mark as unread".
+  - **Run behavior:** a normal list, a long scrolling list, a stuck row that does not block other rows, a second click that stops the run, and a short non-scrolling list that still finishes quickly.
+  - **API:** body structure, xsrf and space-id headers, each topic handled exactly once, page reload, fallback when the API fails, and a slow next page.
+  - **Results and safety:** the `empty` and `fail` states, the sidebar never gets a button, and a run stops if the button is removed mid-run.
+- `test/structural.html` finds rows by structure, for when Chat does not set roles.
 
-Bộ test chạy trên DOM dựng sẵn với `fetch` giả, không gọi server thật. Endpoint và hình dạng header thật được kiểm chứng riêng trên một phiên Google Chat đang đăng nhập.
+The test suite runs against a hand-built DOM with a fake `fetch`. It does not call the real server. The real endpoints and header shapes were verified separately on a signed-in Google Chat session.
 
-## Khi Google đổi payload
+## When Google changes the payload
 
-1. Mở DevTools, tab **Network**, lọc theo tên endpoint (ví dụ `mark_topic_readstate` hoặc `set_topic_unread_timestamp`).
-2. Bấm **Mark as read** trên một row, rồi so body với bảng ở [Cách hoạt động](#2-đánh-dấu-qua-api).
-3. Cập nhật `content.js`, thêm hoặc sửa test trong `test/fixture.html`, chạy `sh test/run.sh`.
-4. Tăng `version` trong `manifest.json` để xác nhận bản đã nạp.
+1. Open DevTools, go to the **Network** tab, and filter by endpoint name (for example `mark_topic_readstate` or `set_topic_unread_timestamp`).
+2. Click **Mark as read** on a row, then compare the body with the table in [How it works](#2-marking-through-the-api).
+3. Update `content.js`, add or change tests in `test/fixture.html`, and run `sh test/run.sh`.
+4. Bump `version` in `manifest.json` so you can confirm the new build is loaded.
 
-`debug/probe.js` là script chỉ đọc DOM. Dán vào Console của tab `chat.google.com` để xem nút và chuỗi cha của nó khi cần chẩn đoán.
+`debug/probe.js` is a read-only DOM inspection script. Paste it into the Console of a `chat.google.com` tab to see the button and its parent chain when diagnosing a problem.
 
-## Cấu trúc repo
+## Repository layout
 
 ```text
-manifest.json       Khai báo extension (MV3), content script và CSS
-content.js          Toàn bộ logic: nút, chọn list, gọi API, dự phòng click
-styles.css          Kiểu của nút
-test/fixture.html   Bộ test chính (DOM dựng sẵn, fetch giả)
-test/structural.html Bộ test dò theo cấu trúc
-test/run.sh         Chạy cả hai bộ test bằng Chrome headless
-debug/probe.js      Script chẩn đoán DOM (chỉ đọc)
+manifest.json        Extension manifest (MV3), content script, and CSS
+content.js           All logic: button, list selection, API calls, click fallback
+styles.css           Button styles
+test/fixture.html    Main test suite (hand-built DOM, fake fetch)
+test/structural.html Structure-based test suite
+test/run.sh          Runs both suites in Chrome headless
+debug/probe.js       DOM diagnostic script (read-only)
 ```
